@@ -6,6 +6,8 @@ import Candidates from "@/components/pages/Candidates"
 import Jobs from "@/components/pages/Jobs"
 import Companies from "@/components/pages/Companies"
 import Analytics from "@/components/pages/Analytics"
+import CandidateProfile from "@/components/pages/CandidateProfile"
+import AddCandidate from "@/components/pages/AddCandidate"
 
 function App() {
   return (
@@ -13,8 +15,10 @@ function App() {
       <div className="min-h-screen bg-white">
         <Layout>
           <Routes>
-            <Route path="/" element={<Dashboard />} />
+<Route path="/" element={<Dashboard />} />
             <Route path="/candidates" element={<Candidates />} />
+            <Route path="/candidates/new" element={<AddCandidate />} />
+            <Route path="/candidates/:id" element={<CandidateProfile />} />
             <Route path="/jobs" element={<Jobs />} />
             <Route path="/companies" element={<Companies />} />
             <Route path="/analytics" element={<Analytics />} />

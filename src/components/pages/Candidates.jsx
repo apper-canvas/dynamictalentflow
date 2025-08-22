@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react"
+import { useNavigate } from "react-router-dom"
 import { motion } from "framer-motion"
 import { toast } from "react-toastify"
 import Button from "@/components/atoms/Button"
@@ -11,6 +12,7 @@ import ApperIcon from "@/components/ApperIcon"
 import { candidateService } from "@/services/api/candidateService"
 
 const Candidates = () => {
+  const navigate = useNavigate()
   const [candidates, setCandidates] = useState([])
   const [filteredCandidates, setFilteredCandidates] = useState([])
   const [loading, setLoading] = useState(true)
@@ -60,8 +62,8 @@ const Candidates = () => {
     performSearch()
   }, [searchQuery, filters])
 
-  const handleAddNewCandidate = () => {
-    toast.info("Add new candidate functionality coming soon")
+const handleAddNewCandidate = () => {
+    navigate("/candidates/new")
   }
 
   const handleFilterChange = (filterType, value, checked) => {

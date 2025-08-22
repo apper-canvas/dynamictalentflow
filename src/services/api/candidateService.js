@@ -1,5 +1,7 @@
-import candidatesData from "@/services/mockData/candidates.json"
-import { dashboardService } from "@/services/api/dashboardService"
+import candidatesData from "@/services/mockData/candidates.json";
+import { dashboardService } from "@/services/api/dashboardService";
+import React from "react";
+import Error from "@/components/ui/Error";
 
 // Simulate API delay
 const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms))
@@ -97,7 +99,7 @@ export const candidateService = {
       experience: [...new Set(candidatesData.map(c => c.experience))].sort(),
       availability: [...new Set(candidatesData.map(c => c.availability))].sort(),
       location: [...new Set(candidatesData.map(c => c.location.split(',')[1]?.trim() || c.location))].sort(),
-      salaryRange: [
+salaryRange: [
         "50k-70k",
         "70k-90k", 
         "90k-110k",
@@ -105,5 +107,45 @@ export const candidateService = {
         "130k+"
       ]
     }
+  },
+
+  async create(candidateData) {
+    await delay(400)
+    
+    // Validate required fields
+    const requiredFields = ['name', 'title', 'email', 'phone', 'location', 'experience', 'availability']
+    for (const field of requiredFields) {
+      if (!candidateData[field] || candidateData[field].toString().trim() === '') {
+        throw new Error(`${field} is required`)
+      }
+    }
+
+    // Generate new ID (highest existing ID + 1)
+    const maxId = Math.max(...candidatesData.map(c => c.Id), 0)
+    const newId = maxId + 1
+
+    // Create new candidate with defaults
+    const newCandidate = {
+      Id: newId,
+      name: candidateData.name.trim(),
+      title: candidateData.title.trim(),
+      email: candidateData.email.trim().toLowerCase(),
+      phone: candidateData.phone.trim(),
+      location: candidateData.location.trim(),
+      experience: candidateData.experience,
+      availability: candidateData.availability,
+      skills: candidateData.skills || [],
+      salaryRange: candidateData.salaryRange || "Not specified",
+      photo: candidateData.photo || "https://images.unsplash.com/photo-1494790108755-2616b612b1e6?w=400&h=400&fit=crop&crop=face",
+      bio: candidateData.bio || "Professional seeking new opportunities.",
+      yearsExperience: candidateData.yearsExperience || 0,
+      projectsCompleted: candidateData.projectsCompleted || 0,
+      certifications: candidateData.certifications || 0
+    }
+
+    // Simulate adding to data store
+    candidatesData.push(newCandidate)
+    
+    return { ...newCandidate }
   }
 }
