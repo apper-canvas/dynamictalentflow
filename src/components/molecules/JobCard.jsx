@@ -30,11 +30,22 @@ const JobCard = ({ job, index, onJobUpdate }) => {
     toast.info("Edit job functionality coming soon")
   }
 
-  const handleViewMatches = () => {
+const handleViewMatches = () => {
     if (job.matchCount === 0) {
       toast.info("No matches found for this position")
-    } else {
-      toast.info(`Viewing ${job.matchCount} matches`)
+      return
+    }
+
+    // Create detailed match information
+    const matchDetails = job.matches.map(match => 
+      `• ${match.name} (${match.compatibilityScore}% match) - Skills: ${match.skills.join(', ')}`
+    ).join('\n')
+
+    const message = `Strong Matches for ${job.title}:\n\n${matchDetails}\n\nCompatibility scores are based on skill alignment and experience relevance.`
+    
+    // Show detailed match information
+    if (window.confirm(message + '\n\nWould you like to see detailed candidate profiles?')) {
+      toast.success(`Found ${job.matchCount} highly compatible candidates for review`)
     }
   }
 
