@@ -35,18 +35,12 @@ const handleViewMatches = () => {
       toast.info("No matches found for this position")
       return
     }
+    // Navigate to job detail page to view matches
+    window.location.href = `/jobs/${job.Id}`
+  }
 
-    // Create detailed match information
-    const matchDetails = job.matches.map(match => 
-      `• ${match.name} (${match.compatibilityScore}% match) - Skills: ${match.skills.join(', ')}`
-    ).join('\n')
-
-    const message = `Strong Matches for ${job.title}:\n\n${matchDetails}\n\nCompatibility scores are based on skill alignment and experience relevance.`
-    
-    // Show detailed match information
-    if (window.confirm(message + '\n\nWould you like to see detailed candidate profiles?')) {
-      toast.success(`Found ${job.matchCount} highly compatible candidates for review`)
-    }
+  const handleViewJobDetail = () => {
+    window.location.href = `/jobs/${job.Id}`
   }
 
   const handleDelete = async () => {
@@ -216,17 +210,24 @@ const handleViewMatches = () => {
           </Button>
         </div>
 
-        {job.matchCount > 0 && (
-          <Button
-            variant="primary"
-            size="sm"
-            className="w-full mt-3"
-            onClick={handleViewMatches}
-          >
-            <ApperIcon name="Users" size={14} className="mr-2" />
-            View Matches ({job.matchCount})
-          </Button>
-        )}
+<Button
+          variant="primary"
+          size="sm"
+          className="w-full mt-3"
+          onClick={handleViewJobDetail}
+        >
+          {job.matchCount > 0 ? (
+            <>
+              <ApperIcon name="Users" size={14} className="mr-2" />
+              View Matches ({job.matchCount})
+            </>
+          ) : (
+            <>
+              <ApperIcon name="Eye" size={14} className="mr-2" />
+              View Details
+            </>
+          )}
+        </Button>
       </div>
     </motion.div>
   )

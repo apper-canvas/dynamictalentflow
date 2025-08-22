@@ -8,7 +8,7 @@ import Companies from "@/components/pages/Companies"
 import Analytics from "@/components/pages/Analytics"
 import CandidateProfile from "@/components/pages/CandidateProfile"
 import AddCandidate from "@/components/pages/AddCandidate"
-
+import JobDetail from "@/components/pages/JobDetail"
 function App() {
   return (
     <BrowserRouter>
@@ -17,9 +17,10 @@ function App() {
           <Routes>
 <Route path="/" element={<Dashboard />} />
             <Route path="/candidates" element={<Candidates />} />
-            <Route path="/candidates/new" element={<AddCandidate />} />
+<Route path="/candidates/new" element={<AddCandidate />} />
             <Route path="/candidates/:id" element={<CandidateProfile />} />
             <Route path="/jobs" element={<Jobs />} />
+            <Route path="/jobs/:id" element={<JobDetail />} />
             <Route path="/companies" element={<Companies />} />
             <Route path="/analytics" element={<Analytics />} />
           </Routes>
