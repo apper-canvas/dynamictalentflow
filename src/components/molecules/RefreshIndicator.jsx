@@ -5,10 +5,19 @@ import ApperIcon from "@/components/ApperIcon"
 const RefreshIndicator = ({ lastUpdated, onRefresh, isLoading = false }) => {
   return (
     <div className="flex items-center justify-between">
-      <div className="flex items-center space-x-2 text-sm text-gray-600">
+<div className="flex items-center space-x-2 text-sm text-gray-600">
         <ApperIcon name="Clock" className="w-4 h-4" />
         <span>
-          Last updated {formatDistanceToNow(new Date(lastUpdated), { addSuffix: true })}
+          Last updated {(() => {
+            try {
+              const date = lastUpdated ? new Date(lastUpdated) : null;
+              return date && !isNaN(date.getTime()) 
+                ? formatDistanceToNow(date, { addSuffix: true })
+                : 'unknown';
+            } catch (error) {
+              return 'unknown';
+            }
+          })()}
         </span>
       </div>
       

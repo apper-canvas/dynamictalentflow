@@ -104,10 +104,19 @@ const handleViewMatches = () => {
           </div>
         </div>
 
-        {/* Posted Date and Applicants */}
+{/* Posted Date and Applicants */}
         <div className="flex items-center justify-between text-sm text-gray-500 mb-4">
           <span>
-            Posted {formatDistanceToNow(new Date(job.postedDate), { addSuffix: true })}
+            Posted {(() => {
+              try {
+                const date = job.postedDate ? new Date(job.postedDate) : null;
+                return date && !isNaN(date.getTime()) 
+                  ? formatDistanceToNow(date, { addSuffix: true })
+                  : 'recently';
+              } catch (error) {
+                return 'recently';
+              }
+            })()}
           </span>
           <div className="flex items-center">
             <ApperIcon name="Users" size={14} className="mr-1" />

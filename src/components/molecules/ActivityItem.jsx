@@ -58,11 +58,20 @@ const ActivityItem = ({ activity, index }) => {
             <p className="text-sm text-gray-600 mb-2">
               {activity.description}
             </p>
-            <div className="flex items-center space-x-3">
+<div className="flex items-center space-x-3">
               <span className="text-xs text-gray-500">
-                {formatDistanceToNow(new Date(activity.timestamp), { addSuffix: true })}
+                {(() => {
+                  try {
+                    const date = activity.timestamp ? new Date(activity.timestamp) : null;
+                    return date && !isNaN(date.getTime()) 
+                      ? formatDistanceToNow(date, { addSuffix: true })
+                      : 'recently';
+                  } catch (error) {
+                    return 'recently';
+                  }
+                })()}
               </span>
-              <Badge 
+              <Badge
                 variant={getBadgeVariant(activity.status)}
                 size="sm"
               >
