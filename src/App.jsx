@@ -5,6 +5,7 @@ import Dashboard from "@/components/pages/Dashboard"
 import Candidates from "@/components/pages/Candidates"
 import Jobs from "@/components/pages/Jobs"
 import Companies from "@/components/pages/Companies"
+import CompanyDetail from "@/components/pages/CompanyDetail"
 import Analytics from "@/components/pages/Analytics"
 import CandidateProfile from "@/components/pages/CandidateProfile"
 import AddCandidate from "@/components/pages/AddCandidate"
@@ -21,7 +22,8 @@ function App() {
             <Route path="/candidates/:id" element={<CandidateProfile />} />
             <Route path="/jobs" element={<Jobs />} />
             <Route path="/jobs/:id" element={<JobDetail />} />
-            <Route path="/companies" element={<Companies />} />
+<Route path="/companies" element={<Companies />} />
+            <Route path="/companies/:id" element={<CompanyDetail />} />
             <Route path="/analytics" element={<Analytics />} />
           </Routes>
         </Layout>
