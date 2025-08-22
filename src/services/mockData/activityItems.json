@@ -55,12 +55,36 @@
     "timestamp": "2024-01-15T08:30:00Z",
     "status": "new"
   },
-  {
+{
     "Id": 8,
     "type": "interview",
     "title": "Interview rescheduled",
     "description": "Mark Thompson - Backend Developer, moved to Friday",
     "timestamp": "2024-01-15T08:00:00Z",
     "status": "rescheduled"
+  },
+  {
+    "Id": 9,
+    "type": "candidate_view",
+    "title": "Viewed Sarah Johnson's profile",
+    "description": "Senior Software Engineer profile accessed for evaluation",
+    "timestamp": "2024-01-15T07:45:00Z",
+    "status": "viewed"
+  },
+  {
+    "Id": 10,
+    "type": "candidate_view", 
+    "title": "Viewed Michael Chen's profile",
+    "description": "Product Manager profile reviewed for upcoming role",
+    "timestamp": "2024-01-15T07:30:00Z",
+    "status": "viewed"
+  },
+  {
+    "Id": 11,
+    "type": "candidate_view",
+    "title": "Viewed Emma Davis's profile", 
+    "description": "UX Designer profile examined for design team expansion",
+    "timestamp": "2024-01-15T07:15:00Z",
+    "status": "viewed"
   }
 ]
