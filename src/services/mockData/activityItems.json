@@ -1,0 +1,66 @@
+[
+  {
+    "Id": 1,
+    "type": "candidate",
+    "title": "Sarah Johnson submitted application",
+    "description": "Applied for Senior Software Engineer at TechCorp",
+    "timestamp": "2024-01-15T14:25:00Z",
+    "status": "new"
+  },
+  {
+    "Id": 2,
+    "type": "interview",
+    "title": "Interview scheduled with Michael Chen",
+    "description": "Product Manager role at StartupXYZ - Tomorrow 2:00 PM",
+    "timestamp": "2024-01-15T13:45:00Z",
+    "status": "scheduled"
+  },
+  {
+    "Id": 3,
+    "type": "placement",
+    "title": "Placement confirmed - Emma Davis",
+    "description": "Successfully placed as UX Designer at DesignStudio",
+    "timestamp": "2024-01-15T12:30:00Z",
+    "status": "confirmed"
+  },
+  {
+    "Id": 4,
+    "type": "candidate",
+    "title": "David Wilson profile updated",
+    "description": "Updated skills and experience for DevOps Engineer",
+    "timestamp": "2024-01-15T11:20:00Z",
+    "status": "updated"
+  },
+  {
+    "Id": 5,
+    "type": "interview",
+    "title": "Interview feedback received",
+    "description": "Positive feedback for Lisa Martinez - Data Scientist role",
+    "timestamp": "2024-01-15T10:15:00Z",
+    "status": "completed"
+  },
+  {
+    "Id": 6,
+    "type": "placement",
+    "title": "Contract signed - Robert Kim",
+    "description": "Accepted offer for Full Stack Developer at WebCorp",
+    "timestamp": "2024-01-15T09:45:00Z",
+    "status": "signed"
+  },
+  {
+    "Id": 7,
+    "type": "candidate",
+    "title": "New candidate registration",
+    "description": "Jessica Brown registered - Marketing Manager",
+    "timestamp": "2024-01-15T08:30:00Z",
+    "status": "new"
+  },
+  {
+    "Id": 8,
+    "type": "interview",
+    "title": "Interview rescheduled",
+    "description": "Mark Thompson - Backend Developer, moved to Friday",
+    "timestamp": "2024-01-15T08:00:00Z",
+    "status": "rescheduled"
+  }
+]
