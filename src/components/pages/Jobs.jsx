@@ -16,7 +16,18 @@ const Jobs = () => {
   const [error, setError] = useState(null)
   const [searchQuery, setSearchQuery] = useState("")
   const [statusFilter, setStatusFilter] = useState("All")
-
+  const [showModal, setShowModal] = useState(false)
+  const [formData, setFormData] = useState({
+    title: "",
+    company: "",
+    department: "",
+    location: "",
+    salaryRange: "",
+    type: "Full-time",
+    description: "",
+    requirements: ""
+  })
+  const [isSubmitting, setIsSubmitting] = useState(false)
   const statusOptions = ["All", "Open", "Filled", "On Hold"]
 
   useEffect(() => {
@@ -49,24 +60,71 @@ const Jobs = () => {
     }
   }
 
-  const handleCreateJob = async () => {
+const handleOpenModal = () => {
+    setShowModal(true)
+  }
+
+  const handleCloseModal = () => {
+    setShowModal(false)
+    setFormData({
+      title: "",
+      company: "",
+      department: "",
+      location: "",
+      salaryRange: "",
+      type: "Full-time",
+      description: "",
+      requirements: ""
+    })
+    setIsSubmitting(false)
+  }
+
+  const handleInputChange = (e) => {
+    const { name, value } = e.target
+    setFormData(prev => ({
+      ...prev,
+      [name]: value
+    }))
+  }
+
+  const handleSubmitJob = async (e) => {
+    e.preventDefault()
+    
+    // Basic validation
+    if (!formData.title.trim() || !formData.company.trim() || !formData.department.trim() || 
+        !formData.location.trim() || !formData.salaryRange.trim() || !formData.description.trim()) {
+      toast.error("Please fill in all required fields")
+      return
+    }
+
+    setIsSubmitting(true)
+    
     try {
+      const requirementsArray = formData.requirements
+        .split(',')
+        .map(req => req.trim())
+        .filter(req => req.length > 0)
+
       const newJob = await createJob({
-        title: "New Position",
-        company: "Your Company",
+        title: formData.title.trim(),
+        company: formData.company.trim(),
         companyLogo: "https://images.unsplash.com/photo-1560472354-b33ff0c44a43?w=80&h=80&fit=crop&crop=faces",
-        department: "Department",
-        location: "Location",
-        salaryRange: "$XX,XXX - $XX,XXX",
-        type: "Full-time",
+        department: formData.department.trim(),
+        location: formData.location.trim(),
+        salaryRange: formData.salaryRange.trim(),
+        type: formData.type,
         status: "Open",
-        description: "Job description",
-        requirements: []
+        description: formData.description.trim(),
+        requirements: requirementsArray
       })
+      
       setJobs(prev => [newJob, ...prev])
-      toast.success("New job created successfully")
+      toast.success("Job posted successfully!")
+      handleCloseModal()
     } catch (error) {
-      toast.error("Failed to create job")
+      toast.error("Failed to create job. Please try again.")
+    } finally {
+      setIsSubmitting(false)
     }
   }
 
@@ -106,8 +164,8 @@ const Jobs = () => {
             Manage job postings and track candidate matches
           </p>
         </div>
-        <Button
-          onClick={handleCreateJob}
+<Button
+          onClick={handleOpenModal}
           className="mt-4 sm:mt-0"
         >
           <ApperIcon name="Plus" size={16} className="mr-2" />
@@ -251,7 +309,7 @@ const Jobs = () => {
                 Clear Filters
               </Button>
             ) : (
-              <Button onClick={handleCreateJob}>
+<Button onClick={handleOpenModal}>
                 <ApperIcon name="Plus" size={16} className="mr-2" />
                 Post New Job
               </Button>
@@ -269,6 +327,216 @@ const Jobs = () => {
             />
           ))}
         </div>
+)}
+
+      {/* Job Creation Modal */}
+      {showModal && (
+        <motion.div
+          className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          onClick={handleCloseModal}
+        >
+          <motion.div
+            className="bg-white rounded-xl shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto"
+            initial={{ scale: 0.95, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            exit={{ scale: 0.95, opacity: 0 }}
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="p-6">
+              {/* Modal Header */}
+              <div className="flex items-center justify-between mb-6">
+                <div>
+                  <h2 className="text-2xl font-bold text-gray-900">Post New Job</h2>
+                  <p className="text-gray-600 mt-1">Create a new job posting to attract top talent</p>
+                </div>
+                <button
+                  onClick={handleCloseModal}
+                  className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+                  disabled={isSubmitting}
+                >
+                  <ApperIcon name="X" size={20} className="text-gray-500" />
+                </button>
+              </div>
+
+              {/* Modal Form */}
+              <form onSubmit={handleSubmitJob} className="space-y-6">
+                {/* Job Title */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Job Title <span className="text-red-500">*</span>
+                  </label>
+                  <input
+                    type="text"
+                    name="title"
+                    value={formData.title}
+                    onChange={handleInputChange}
+                    placeholder="e.g. Senior Frontend Developer"
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+                    disabled={isSubmitting}
+                    required
+                  />
+                </div>
+
+                {/* Company and Department */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Company <span className="text-red-500">*</span>
+                    </label>
+                    <input
+                      type="text"
+                      name="company"
+                      value={formData.company}
+                      onChange={handleInputChange}
+                      placeholder="e.g. TechCorp"
+                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+                      disabled={isSubmitting}
+                      required
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Department <span className="text-red-500">*</span>
+                    </label>
+                    <input
+                      type="text"
+                      name="department"
+                      value={formData.department}
+                      onChange={handleInputChange}
+                      placeholder="e.g. Engineering"
+                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+                      disabled={isSubmitting}
+                      required
+                    />
+                  </div>
+                </div>
+
+                {/* Location and Job Type */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Location <span className="text-red-500">*</span>
+                    </label>
+                    <input
+                      type="text"
+                      name="location"
+                      value={formData.location}
+                      onChange={handleInputChange}
+                      placeholder="e.g. San Francisco, CA or Remote"
+                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+                      disabled={isSubmitting}
+                      required
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Job Type
+                    </label>
+                    <select
+                      name="type"
+                      value={formData.type}
+                      onChange={handleInputChange}
+                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+                      disabled={isSubmitting}
+                    >
+                      <option value="Full-time">Full-time</option>
+                      <option value="Part-time">Part-time</option>
+                      <option value="Contract">Contract</option>
+                      <option value="Freelance">Freelance</option>
+                      <option value="Internship">Internship</option>
+                    </select>
+                  </div>
+                </div>
+
+                {/* Salary Range */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Salary Range <span className="text-red-500">*</span>
+                  </label>
+                  <input
+                    type="text"
+                    name="salaryRange"
+                    value={formData.salaryRange}
+                    onChange={handleInputChange}
+                    placeholder="e.g. $120,000 - $150,000"
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+                    disabled={isSubmitting}
+                    required
+                  />
+                </div>
+
+                {/* Job Description */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Job Description <span className="text-red-500">*</span>
+                  </label>
+                  <textarea
+                    name="description"
+                    value={formData.description}
+                    onChange={handleInputChange}
+                    placeholder="Describe the role, responsibilities, and what makes this opportunity exciting..."
+                    rows={4}
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent resize-vertical"
+                    disabled={isSubmitting}
+                    required
+                  />
+                </div>
+
+                {/* Requirements */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Requirements
+                  </label>
+                  <textarea
+                    name="requirements"
+                    value={formData.requirements}
+                    onChange={handleInputChange}
+                    placeholder="Enter requirements separated by commas (e.g. React, TypeScript, 5+ years experience)"
+                    rows={3}
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent resize-vertical"
+                    disabled={isSubmitting}
+                  />
+                  <p className="text-sm text-gray-500 mt-1">
+                    Separate multiple requirements with commas
+                  </p>
+                </div>
+
+                {/* Form Actions */}
+                <div className="flex flex-col sm:flex-row gap-3 pt-4">
+                  <Button
+                    type="button"
+                    variant="secondary"
+                    onClick={handleCloseModal}
+                    disabled={isSubmitting}
+                    className="sm:order-1"
+                  >
+                    Cancel
+                  </Button>
+                  <Button
+                    type="submit"
+                    disabled={isSubmitting}
+                    className="sm:order-2 flex-1"
+                  >
+                    {isSubmitting ? (
+                      <>
+                        <ApperIcon name="Loader2" size={16} className="mr-2 animate-spin" />
+                        Creating Job...
+                      </>
+                    ) : (
+                      <>
+                        <ApperIcon name="Plus" size={16} className="mr-2" />
+                        Post Job
+                      </>
+                    )}
+                  </Button>
+                </div>
+              </form>
+            </div>
+          </motion.div>
+        </motion.div>
       )}
     </div>
   )
