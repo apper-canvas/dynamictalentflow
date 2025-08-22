@@ -426,3 +426,10 @@ export const deleteJob = (id) => {
   
   return mockJobs.splice(index, 1)[0];
 };
+
+export const getJobsByCompany = (companyName) => {
+  if (!companyName) return [];
+  return mockJobs.filter(job => 
+    job.company.toLowerCase() === companyName.toLowerCase()
+  );
+};

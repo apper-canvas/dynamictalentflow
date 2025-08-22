@@ -424,3 +424,27 @@ export const searchCompanies = (searchTerm, filters = {}) => {
   
   return filtered;
 };
+
+export const getCompanyByName = (name) => {
+  if (!name) return null;
+  return mockCompanies.find(company => 
+    company.name.toLowerCase() === name.toLowerCase()
+  );
+};
+
+export const getCompanyJobStats = (companyName) => {
+  // This would integrate with job service in a real implementation
+  // For now, we'll use the existing mock data in the company objects
+  const company = getCompanyByName(companyName);
+  if (!company) return { openJobs: 0, totalPlacements: 0, placementRate: 0 };
+  
+  const placementRate = company.openPositions > 0 
+    ? Math.round((company.successfulPlacements / (company.successfulPlacements + company.openPositions)) * 100)
+    : company.successfulPlacements > 0 ? 100 : 0;
+    
+  return {
+    openJobs: company.openPositions,
+    totalPlacements: company.successfulPlacements,
+    placementRate: placementRate
+  };
+};
