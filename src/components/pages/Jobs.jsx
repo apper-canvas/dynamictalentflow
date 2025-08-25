@@ -307,14 +307,11 @@ const handleOpenModal = () => {
                 variant="secondary"
               >
                 Clear Filters
-              </Button>
-            ) : (
-<Button onClick={handleOpenModal}>
-                <ApperIcon name="Plus" size={16} className="mr-2" />
-                Post New Job
-              </Button>
-            )
+</Button>
+            ) : null
           }
+          action={searchQuery || statusFilter !== "All" ? null : handleOpenModal}
+          actionLabel={searchQuery || statusFilter !== "All" ? undefined : "Post New Job"}
         />
       ) : (
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
