@@ -25,14 +25,7 @@ const Empty = ({
       <p className="text-gray-600 mb-6 max-w-md">
         {description}
       </p>
-      {action && (
-        <Button
-          onClick={action}
-          className="bg-gradient-to-r from-primary-600 to-primary-500 hover:from-primary-700 hover:to-primary-600 text-white"
-        >
-          {actionLabel}
-        </Button>
-      )}
+{action && action}
     </motion.div>
   )
 }
