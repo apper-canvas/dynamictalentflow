@@ -100,9 +100,9 @@ export const createJob = async (jobData) => {
       status_c: jobData.status || "Open",
       posted_date_c: new Date().toISOString().split('T')[0],
       applicant_count_c: jobData.applicantCount || 0,
-      match_count_c: jobData.matchCount || 0,
+match_count_c: jobData.matchCount || 0,
       description_c: jobData.description?.trim(),
-      requirements_c: Array.isArray(jobData.requirements) ? jobData.requirements.join(",") : (jobData.requirements || ""),
+      requirements_c: Array.isArray(jobData.requirements) ? jobData.requirements : (jobData.requirements ? jobData.requirements.split(',').map(req => req.trim()).filter(req => req.length > 0) : []),
       matches_c: ""
     }
 
