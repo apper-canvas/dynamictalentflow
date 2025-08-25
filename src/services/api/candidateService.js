@@ -198,13 +198,13 @@ export const candidateService = {
 
   async create(candidateData) {
     try {
-      const data = {
+const data = {
         Name: candidateData.name?.trim(),
         title_c: candidateData.title?.trim(),
         email_c: candidateData.email?.trim().toLowerCase(),
         phone_c: candidateData.phone?.trim(),
         photo_c: candidateData.photo || "https://images.unsplash.com/photo-1494790108755-2616b612b1e6?w=400&h=400&fit=crop&crop=face",
-        skills_c: candidateData.skills?.join(",") || "",
+        skills_c: candidateData.skills || [],
         experience_c: candidateData.experience,
         years_experience_c: parseInt(candidateData.yearsExperience) || 0,
         availability_c: candidateData.availability,
@@ -227,13 +227,23 @@ export const candidateService = {
         const successfulRecords = response.results.filter(result => result.success)
         const failedRecords = response.results.filter(result => !result.success)
         
-        if (failedRecords.length > 0) {
+if (failedRecords.length > 0) {
           console.error(`Failed to create candidate ${failedRecords.length} records:${JSON.stringify(failedRecords)}`)
           failedRecords.forEach(record => {
             record.errors?.forEach(error => {
-              console.error(`${error.fieldLabel}: ${error}`)
+              console.error(`${error.fieldLabel}: ${error.message || error}`)
             })
+            if (record.message) {
+              console.error(`Record error: ${record.message}`)
+            }
           })
+          // Throw the first error to surface it to the UI
+          const firstError = failedRecords[0]
+          if (firstError.errors && firstError.errors.length > 0) {
+            throw new Error(`${firstError.errors[0].fieldLabel}: ${firstError.errors[0].message || firstError.errors[0]}`)
+          } else if (firstError.message) {
+            throw new Error(firstError.message)
+          }
         }
         
         return successfulRecords[0]?.data || null
