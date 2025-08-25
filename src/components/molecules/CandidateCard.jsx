@@ -58,17 +58,17 @@ const CandidateCard = ({ candidate, index }) => {
           </Badge>
         </div>
 
-        {/* Skills Tags */}
+{/* Skills Tags */}
         <div className="mb-4">
           <div className="flex flex-wrap gap-1">
-            {candidate.skills.slice(0, 3).map((skill, index) => (
+            {(candidate.skills?.slice(0, 3) || []).map((skill, index) => (
               <Badge key={index} variant="info" size="sm" className="text-xs">
                 {skill}
               </Badge>
             ))}
-            {candidate.skills.length > 3 && (
+            {(candidate.skills?.length || 0) > 3 && (
               <Badge variant="default" size="sm" className="text-xs">
-                +{candidate.skills.length - 3}
+                +{(candidate.skills?.length || 0) - 3}
               </Badge>
             )}
           </div>
