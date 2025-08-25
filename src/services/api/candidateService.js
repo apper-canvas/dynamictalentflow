@@ -1,151 +1,252 @@
-import candidatesData from "@/services/mockData/candidates.json";
-import { dashboardService } from "@/services/api/dashboardService";
-import React from "react";
-import Error from "@/components/ui/Error";
+const { ApperClient } = window.ApperSDK
 
-// Simulate API delay
-const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms))
+const apperClient = new ApperClient({
+  apperProjectId: import.meta.env.VITE_APPER_PROJECT_ID,
+  apperPublicKey: import.meta.env.VITE_APPER_PUBLIC_KEY
+})
 
 export const candidateService = {
   async getAll() {
-    await delay(300)
-    return [...candidatesData].sort((a, b) => a.name.localeCompare(b.name))
+    try {
+      const params = {
+        fields: [
+          { field: { Name: "Name" } },
+          { field: { Name: "title_c" } },
+          { field: { Name: "email_c" } },
+          { field: { Name: "phone_c" } },
+          { field: { Name: "photo_c" } },
+          { field: { Name: "skills_c" } },
+          { field: { Name: "experience_c" } },
+          { field: { Name: "years_experience_c" } },
+          { field: { Name: "availability_c" } },
+          { field: { Name: "location_c" } },
+          { field: { Name: "salary_range_c" } },
+          { field: { Name: "bio_c" } },
+          { field: { Name: "projects_completed_c" } },
+          { field: { Name: "certifications_c" } }
+        ],
+        orderBy: [{ fieldName: "Name", sorttype: "ASC" }]
+      }
+
+      const response = await apperClient.fetchRecords("candidate_c", params)
+      
+      if (!response.success) {
+        console.error(response.message)
+        throw new Error(response.message)
+      }
+
+      return response.data || []
+    } catch (error) {
+      if (error?.response?.data?.message) {
+        console.error("Error fetching candidates:", error.response.data.message)
+      } else {
+        console.error(error)
+      }
+      throw error
+    }
   },
 
   async getById(id) {
-    await delay(200)
-    const candidate = candidatesData.find(c => c.Id === parseInt(id))
-    return candidate ? { ...candidate } : null
+    try {
+      const params = {
+        fields: [
+          { field: { Name: "Name" } },
+          { field: { Name: "title_c" } },
+          { field: { Name: "email_c" } },
+          { field: { Name: "phone_c" } },
+          { field: { Name: "photo_c" } },
+          { field: { Name: "skills_c" } },
+          { field: { Name: "experience_c" } },
+          { field: { Name: "years_experience_c" } },
+          { field: { Name: "availability_c" } },
+          { field: { Name: "location_c" } },
+          { field: { Name: "salary_range_c" } },
+          { field: { Name: "bio_c" } },
+          { field: { Name: "projects_completed_c" } },
+          { field: { Name: "certifications_c" } }
+        ]
+      }
+
+      const response = await apperClient.getRecordById("candidate_c", parseInt(id), params)
+      
+      if (!response.success) {
+        console.error(response.message)
+        return null
+      }
+
+      return response.data || null
+    } catch (error) {
+      if (error?.response?.data?.message) {
+        console.error(`Error fetching candidate with ID ${id}:`, error.response.data.message)
+      } else {
+        console.error(error)
+      }
+      return null
+    }
   },
 
   async search(query, filters = {}) {
-    await delay(250)
-    let results = [...candidatesData]
+    try {
+      const params = {
+        fields: [
+          { field: { Name: "Name" } },
+          { field: { Name: "title_c" } },
+          { field: { Name: "email_c" } },
+          { field: { Name: "phone_c" } },
+          { field: { Name: "photo_c" } },
+          { field: { Name: "skills_c" } },
+          { field: { Name: "experience_c" } },
+          { field: { Name: "years_experience_c" } },
+          { field: { Name: "availability_c" } },
+          { field: { Name: "location_c" } },
+          { field: { Name: "salary_range_c" } },
+          { field: { Name: "bio_c" } },
+          { field: { Name: "projects_completed_c" } },
+          { field: { Name: "certifications_c" } }
+        ],
+        where: [],
+        orderBy: [{ fieldName: "Name", sorttype: "ASC" }]
+      }
 
-    // Text search across name, title, skills
-    if (query.trim()) {
-      const searchTerm = query.toLowerCase()
-      results = results.filter(candidate => 
-        candidate.name.toLowerCase().includes(searchTerm) ||
-        candidate.title.toLowerCase().includes(searchTerm) ||
-        candidate.skills.some(skill => skill.toLowerCase().includes(searchTerm)) ||
-        candidate.location.toLowerCase().includes(searchTerm)
-      )
+      if (query.trim()) {
+        params.where.push({
+          FieldName: "Name",
+          Operator: "Contains",
+          Values: [query.trim()]
+        })
+      }
+
+      if (filters.skills && filters.skills.length > 0) {
+        params.where.push({
+          FieldName: "skills_c",
+          Operator: "Contains",
+          Values: filters.skills
+        })
+      }
+
+      if (filters.experience && filters.experience.length > 0) {
+        params.where.push({
+          FieldName: "experience_c",
+          Operator: "ExactMatch",
+          Values: filters.experience
+        })
+      }
+
+      if (filters.availability && filters.availability.length > 0) {
+        params.where.push({
+          FieldName: "availability_c",
+          Operator: "ExactMatch",
+          Values: filters.availability
+        })
+      }
+
+      const response = await apperClient.fetchRecords("candidate_c", params)
+      
+      if (!response.success) {
+        console.error(response.message)
+        return []
+      }
+
+      return response.data || []
+    } catch (error) {
+      if (error?.response?.data?.message) {
+        console.error("Error searching candidates:", error.response.data.message)
+      } else {
+        console.error(error)
+      }
+      return []
     }
-
-    // Apply filters
-    if (filters.skills && filters.skills.length > 0) {
-      results = results.filter(candidate =>
-        filters.skills.some(skill => 
-          candidate.skills.some(candidateSkill => 
-            candidateSkill.toLowerCase().includes(skill.toLowerCase())
-          )
-        )
-      )
-    }
-
-    if (filters.experience && filters.experience.length > 0) {
-      results = results.filter(candidate =>
-        filters.experience.includes(candidate.experience)
-      )
-    }
-
-    if (filters.availability && filters.availability.length > 0) {
-      results = results.filter(candidate =>
-        filters.availability.includes(candidate.availability)
-      )
-    }
-
-    if (filters.location && filters.location.length > 0) {
-      results = results.filter(candidate =>
-        filters.location.some(loc => 
-          candidate.location.toLowerCase().includes(loc.toLowerCase())
-        )
-      )
-    }
-
-    if (filters.salaryRange && filters.salaryRange.length > 0) {
-      results = results.filter(candidate => {
-        const candidateRange = candidate.salaryRange
-        return filters.salaryRange.some(range => 
-          candidateRange.includes(range) || range.includes(candidateRange.split('-')[0].replace(/[^0-9]/g, ''))
-        )
-      })
-    }
-
-    return results.sort((a, b) => a.name.localeCompare(b.name))
   },
 
   async logCandidateView(candidateId, candidateName) {
-    // Add candidate view activity to dashboard
-    const activity = {
-      Id: Date.now(), // Simple ID generation for mock
-      type: "candidate_view",
-      title: `Viewed ${candidateName}'s profile`,
-      description: `Candidate profile accessed for review and evaluation`,
-      timestamp: new Date().toISOString(),
-      status: "viewed"
-    }
+    try {
+      const activityData = {
+        Name: `Viewed ${candidateName}'s profile`,
+        type_c: "candidate_view",
+        title_c: `Viewed ${candidateName}'s profile`,
+        description_c: `Candidate profile accessed for review and evaluation`,
+        timestamp_c: new Date().toISOString(),
+        status_c: "viewed"
+      }
 
-    // This would normally be sent to the backend
-    // For now, we'll just simulate the API call
-    await delay(100)
-    return activity
+      const params = { records: [activityData] }
+      const response = await apperClient.createRecord("activity_item_c", params)
+      
+      if (!response.success) {
+        console.error(response.message)
+      }
+
+      return response.data?.[0] || null
+    } catch (error) {
+      if (error?.response?.data?.message) {
+        console.error("Error logging candidate view:", error.response.data.message)
+      } else {
+        console.error(error)
+      }
+    }
   },
 
   getFilterOptions() {
     return {
-      skills: [...new Set(candidatesData.flatMap(c => c.skills))].sort(),
-      experience: [...new Set(candidatesData.map(c => c.experience))].sort(),
-      availability: [...new Set(candidatesData.map(c => c.availability))].sort(),
-      location: [...new Set(candidatesData.map(c => c.location.split(',')[1]?.trim() || c.location))].sort(),
-salaryRange: [
-        "50k-70k",
-        "70k-90k", 
-        "90k-110k",
-        "110k-130k",
-        "130k+"
-      ]
+      skills: ["React", "TypeScript", "Node.js", "Python", "AWS", "Product Strategy", "Agile", "Analytics", "User Research", "Roadmapping", "Figma", "Prototyping", "Design Systems", "Accessibility", "Kubernetes", "Docker", "Terraform", "CI/CD", "Machine Learning", "SQL", "Tableau", "Statistics"],
+      experience: ["Senior", "Mid-level", "Junior"],
+      availability: ["Available", "Interviewing", "Not Available"],
+      location: ["San Francisco, CA", "New York, NY", "Austin, TX", "Seattle, WA", "Boston, MA"],
+      salaryRange: ["50k-70k", "70k-90k", "90k-110k", "110k-130k", "130k+"]
     }
   },
 
   async create(candidateData) {
-    await delay(400)
-    
-    // Validate required fields
-    const requiredFields = ['name', 'title', 'email', 'phone', 'location', 'experience', 'availability']
-    for (const field of requiredFields) {
-      if (!candidateData[field] || candidateData[field].toString().trim() === '') {
-        throw new Error(`${field} is required`)
+    try {
+      const data = {
+        Name: candidateData.name?.trim(),
+        title_c: candidateData.title?.trim(),
+        email_c: candidateData.email?.trim().toLowerCase(),
+        phone_c: candidateData.phone?.trim(),
+        photo_c: candidateData.photo || "https://images.unsplash.com/photo-1494790108755-2616b612b1e6?w=400&h=400&fit=crop&crop=face",
+        skills_c: candidateData.skills?.join(",") || "",
+        experience_c: candidateData.experience,
+        years_experience_c: parseInt(candidateData.yearsExperience) || 0,
+        availability_c: candidateData.availability,
+        location_c: candidateData.location?.trim(),
+        salary_range_c: candidateData.salaryRange || "Not specified",
+        bio_c: candidateData.bio || "Professional seeking new opportunities.",
+        projects_completed_c: parseInt(candidateData.projectsCompleted) || 0,
+        certifications_c: parseInt(candidateData.certifications) || 0
       }
+
+      const params = { records: [data] }
+      const response = await apperClient.createRecord("candidate_c", params)
+      
+      if (!response.success) {
+        console.error(response.message)
+        throw new Error(response.message)
+      }
+
+      if (response.results) {
+        const successfulRecords = response.results.filter(result => result.success)
+        const failedRecords = response.results.filter(result => !result.success)
+        
+        if (failedRecords.length > 0) {
+          console.error(`Failed to create candidate ${failedRecords.length} records:${JSON.stringify(failedRecords)}`)
+          failedRecords.forEach(record => {
+            record.errors?.forEach(error => {
+              console.error(`${error.fieldLabel}: ${error}`)
+            })
+          })
+        }
+        
+        return successfulRecords[0]?.data || null
+      }
+      
+      return null
+    } catch (error) {
+      if (error?.response?.data?.message) {
+        console.error("Error creating candidate:", error.response.data.message)
+      } else {
+        console.error(error)
+      }
+      throw error
     }
-
-    // Generate new ID (highest existing ID + 1)
-    const maxId = Math.max(...candidatesData.map(c => c.Id), 0)
-    const newId = maxId + 1
-
-    // Create new candidate with defaults
-    const newCandidate = {
-      Id: newId,
-      name: candidateData.name.trim(),
-      title: candidateData.title.trim(),
-      email: candidateData.email.trim().toLowerCase(),
-      phone: candidateData.phone.trim(),
-      location: candidateData.location.trim(),
-      experience: candidateData.experience,
-      availability: candidateData.availability,
-      skills: candidateData.skills || [],
-      salaryRange: candidateData.salaryRange || "Not specified",
-      photo: candidateData.photo || "https://images.unsplash.com/photo-1494790108755-2616b612b1e6?w=400&h=400&fit=crop&crop=face",
-      bio: candidateData.bio || "Professional seeking new opportunities.",
-      yearsExperience: candidateData.yearsExperience || 0,
-      projectsCompleted: candidateData.projectsCompleted || 0,
-      certifications: candidateData.certifications || 0
-    }
-
-    // Simulate adding to data store
-    candidatesData.push(newCandidate)
-    
-    return { ...newCandidate }
   }
 }
