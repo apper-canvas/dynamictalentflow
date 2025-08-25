@@ -196,7 +196,7 @@ export const candidateService = {
     }
   },
 
-  async create(candidateData) {
+async create(candidateData) {
     try {
 const data = {
         Name: candidateData.name?.trim(),
@@ -204,7 +204,7 @@ const data = {
         email_c: candidateData.email?.trim().toLowerCase(),
         phone_c: candidateData.phone?.trim(),
         photo_c: candidateData.photo || "https://images.unsplash.com/photo-1494790108755-2616b612b1e6?w=400&h=400&fit=crop&crop=face",
-        skills_c: candidateData.skills || [],
+        skills_c: Array.isArray(candidateData.skills) ? candidateData.skills.join(',') : '',
         experience_c: candidateData.experience,
         years_experience_c: parseInt(candidateData.yearsExperience) || 0,
         availability_c: candidateData.availability,
